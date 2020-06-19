@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="content-section">
+    <div class="article-metadata">
+      <h1>{{ course.name }}</h1>
+      <div class="row">
+        <div class="col-sm-9">
+          <div class="rating mb-3">
+            <span class="total-votes">Total votes: {{ course.votes }}</span>
+            {% for star in range(5,0,-1) %}
+              {% if course.votes > 0 and star <= (course.rating/course.votes)  %}
+                <a class="star-filled" href="{{ url_for('courses.rate_course', course_id=course.id, rating=star) }}">
+                  <span >☆</span>
+                </a>
+              {% else %}
+                <a class="star-empty" href="{{ url_for('courses.rate_course', course_id=course.id, rating=star) }}">
+                  <span >☆</span>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% if current_user.is_authenticated and course in current_user.courses.all() %}
+            <a class="btn btn-secondary mb-2" href="{{ url_for('users.unsubscribe', course_id=course.id) }}">Unsubscribe</a>
+          {% else %}
+            <a class="btn btn-primary mb-2" href="{{ url_for('users.subscribe', course_id=course.id) }}">Subscribe</a>
+          {% endif %}
+        </div>
+        <div class="col-sm-3">
+          <span>created by</span>
+          <h3>
+              {{ course.lector.group.stakeholders }}
+          </h3>
+        </div>
+      </div>
+      <div class="mb-2">
+        <small class="d-inline mr-4">Already participating</small>
+        {% for pupil in course.pupils[:5] %}
+          <div class="profile-small d-inline mr-2">
+            <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/' + pupil.avatar) }}" title="{{ pupil.fullname() }}">
+          </div>
+        {% endfor %}
+        <h2 class="d-inline">...</h2>
+      </div>
+    </div>
+    <div class="article-content">
+      <div class="row">
+        <div class="col-sm-9">
+          <h3>About this course</h3>
+          <div>{{ course.description }}</div>
+        </div>
+        <div class="col-sm-3 text-center border-left profile-big">
+          <h4>Your teacher is</h4>
+          <span>
+            {{ course.lector.fullname() }}
+          </span>
+          <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/' + course.lector.avatar) }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="article-metadata">
+      <h2> Course content </h2>
+      {% if course.lector == current_user %}
+        {% if edit_enable == True %}
+          <a class="btn btn-success mb-2" href="{{ url_for('courses.get_course', course_id=course.id, edit_enable=edit_enable) }}">Save</a>
+        {% else %}
+          <a class="btn btn-primary mb-2" href="{{ url_for('courses.edit_course', course_id=course.id, edit_enable=edit_enable) }}">Edit</a>
+        {% endif %}
+      {% endif %}
+    </div>
+      <div class="article-content">
+      {% for lecture in course.lectures %}
+        <a class="text-decoration-none link-block" href="{{ url_for('lectures.get_lecture', course_id=course.id, lecture_id=lecture.id) }}">
+          <div class="border-bottom">
+            <h3> {{ lecture.name }}</h3>
+            <div>
+              {{ lecture.description }}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </article>
+{% endblock content %}

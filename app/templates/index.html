@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+  <nav class="navbar navbar-default p-0">
+    <p class="mb-0 text-muted">All available courses</p>
+  </nav>
+  {% if courses %}
+    <hr class="mt-0">
+    {% if courses.items %}
+      {% for course in courses.items %}
+        <a class="text-decoration-none" href="{{ url_for('courses.get_course', course_id=course.id) }}">
+          <article class="content-section">
+            <div class="article-metadata">
+              <small class="text-muted">Преподаватель: {{ course.lector.initials() }} </small>
+            </div>
+            <div class="row">
+              <div class="col-sm-8 text-left">
+                <h4 class="article-title">{{ course.name }}</h4>
+                {% if current_user.is_authenticated and course in current_user.courses.all() %}
+                  <a class="btn btn-secondary mb-4" href="{{ url_for('users.unsubscribe', course_id=course.id) }}">Unsubscribe</a>
+                {% else %}
+                  <a class="btn btn-primary mb-4" href="{{ url_for('users.subscribe', course_id=course.id) }}">Subscribe</a>
+                {% endif %}
+              </div>
+              <div class="col-sm-4 text-right">
+                <img class="thumbnail" src="{{ url_for('static', filename='course_thumbnails/' + course.picture) }}" />
+              </div>
+            </div>
+          </article>
+        </a>
+      {% endfor %}
+    {% endif %}
+<div class="text-center">
+  {% for page_num in courses.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+  {% if page_num %}
+  {% if courses.page == page_num %}
+  <a class="btn btn-primary mb-4" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
+  {% else %}
+</div>
+<div class="text-center">
+  <a class="btn btn-outline-primary mb-4" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
+  {% endif %}
+  {% else %}
+  ...
+  {% endif %}
+  {% endfor %}
+</div>
+  {% endif %}
+{% endblock content %}

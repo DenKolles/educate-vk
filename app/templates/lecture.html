@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="content-section">
+    <div class="article-metadata">
+      <h1>{{ lecture.name }}</h1>
+    </div>
+    <div class="article-content border-bottom">
+      {{ lecture.description }}
+    </div>
+    <div class="article-content">
+      {% for paragraph in lecture.paragraphs %}
+        <a href="{{ url_for('paragraphs.download_file', file_path=paragraph.content) }}">{{ paragraph.name }}</a>
+      {% endfor %}
+    </div>
+    <div class="article-metadata">
+      <h3>Comments</h3>
+    </div>
+    <div class="">
+      {% for paragraph in lecture.paragraphs %}
+        {% for post in paragraph.posts %}
+          {{ post.content }}
+        {% endfor %}
+      {% endfor %}
+      <form method="POST" action="">
+        {{ post_form.hidden_tag() }}
+        <div class="form-group">
+            {% if post_form.content.errors %}
+                {{ form.content(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in post_form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ post_form.content(class="form-control", placeholder=post_form.content.label()) }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ post_form.submit(class="btn btn-outline-primary") }}
+        </div>
+      </form>
+    </div>
+  </article>
+{% endblock content %}

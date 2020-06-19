@@ -1,0 +1,13 @@
+class Config:
+    APP_NAME = "VKEdu Portal"
+
+    CSRF_ENABLED = True
+    SECRET_KEY = '1cad82c7fae253d724a735144a1921f0'
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    USER_APP_NAME = APP_NAME
+    USER_ENABLE_EMAIL = False
+    USER_ENABLE_USERNAME = True
+    USER_REQUIRE_RETYPE_PASSWORD = False
